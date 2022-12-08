@@ -4,66 +4,92 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lesson11_new"
+        xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         
         Title="MainWindow" Height="450" Width="850"
         WindowStyle="None"        
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
+        AllowsTransparency="True"
         MouseDown="Window_MouseDown">
     <Border CornerRadius="30"
             Background="Gray"
-            BorderBrush="Black"
-            BorderThickness="5">
+            BorderBrush="White"
+            BorderThickness="2">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.1*"/>
+            <RowDefinition Height="35"/>
             <RowDefinition/>
             <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="0.05*"/>
-                <ColumnDefinition Width="0.05*"/>
-                <ColumnDefinition Width="0.05*"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
             <ComboBox x:Name="cb_worker"
                       HorizontalAlignment="Left"
-                Width="200" Margin="30,5" 
+                Width="200" Margin="30,5,0,0" 
                  SelectedIndex="{Binding Path=SelectIndexWorcer}">
                 <TextBlock Text="Консультант"/>
                 <TextBlock Text="Менеджер"/>     
             </ComboBox>
-        </Grid>
-        <DataGrid x:Name="dg_client" Grid.Row="1" Margin="10" 
+                <Button x:Name="btnMinimaze"
+                        Style="{StaticResource topButon}"
+                        Grid.Column="1"                                             
+                        Margin="5"                      
+                        Click="btnMinimaze_Click"
+                       >
+                    <Icon:PackIconMaterial Kind="CollapseAll" Width="15" Height="15"/>
+                </Button>
+
+                <Button x:Name="btnClose"
+                        Grid.Column="2"
+                        Style="{StaticResource topButon}"
+                        
+                        Margin="5"                        
+                        Click="btnClose_Click"
+                       >
+                    <Icon:PackIconMaterial Kind="Close" Width="15" Height="15" />
+                </Button>
+
+            </Grid>
+        <DataGrid x:Name="dg_client" Grid.Row="1" Margin="10,5" 
                   AlternatingRowBackground="Gray"
                   AutoGenerateColumns="False"
                   
                   ItemsSource="{Binding ClientBanksObs}"
                   >
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Фамилия" Binding="{Binding LastnameClient}"/>
-                <DataGridTextColumn Header="Имя" Binding="{Binding NameClient}"/>
-                <DataGridTextColumn Header="Отчество" Binding="{Binding PatronymicClient}"/>
-                <DataGridTextColumn Header="Номер телефона" Binding="{Binding NumberPhoneClient}"/>
-                <DataGridTextColumn Header="Серия и номер паспорта" Binding="{Binding SeriesAndNumberPassportClient}"/>
-                <DataGridTextColumn Header="Кто внес изменения" Binding="{Binding WhoCangedFile}"/>
-                <DataGridTextColumn Header="Время изменения" Binding="{Binding TimeOfChange}"/>
-                <DataGridTextColumn Header="Что изменилось" Binding="{Binding WhatDataHasChangedInFile}"/>
+                <DataGridTextColumn Width="auto" Header="Фамилия" Binding="{Binding LastnameClient}"/>
+                <DataGridTextColumn Width="auto" Header="Имя" Binding="{Binding NameClient}"/>
+                <DataGridTextColumn Width="auto" Header="Отчество" Binding="{Binding PatronymicClient}"/>
+                <DataGridTextColumn Width="auto" Header="Номер телефона" Binding="{Binding NumberPhoneClient}"/>
+                <DataGridTextColumn Width="auto" Header="Серия и номер паспорта" Binding="{Binding SeriesAndNumberPassportClient}"/>
+                <DataGridTextColumn Width="auto" Header="Кто внес изменения" Binding="{Binding WhoCangedFile}"/>
+                <DataGridTextColumn Width="auto" Header="Время изменения" Binding="{Binding TimeOfChange}"/>
+                <DataGridTextColumn Width="auto" Header="Что изменилось" Binding="{Binding WhatDataHasChangedInFile}"/>
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <Button Name="bt_create_client"
-                    Margin="5"
-                    Content="Создать клиента"
+                    Style="{StaticResource bottomButon}"
+                    Margin="30,0,5,5"                   
+                    Content="Создать клиента"                    
                     Command="{Binding ShowCreateClientWindow}"/>
+            
             <Button Name="bt_update_client"
-                    Margin="5"
+                    Style="{StaticResource bottomButon}"
+                    Margin="5,0,5,5"
                     Content="Обновить список клиентов"
                     Command="{Binding UpdateDataGrid}"/>
+            
             <Button x:Name="bt_saveChange"
-                    Margin="5"
+                    Style="{StaticResource bottomButon}"
+                    Margin="5,0,5,5"
                     Content="Сохронить изменения"/>
         </StackPanel>
     </Grid>
