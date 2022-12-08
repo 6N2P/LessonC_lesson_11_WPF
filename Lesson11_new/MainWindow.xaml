@@ -23,6 +23,7 @@
             <RowDefinition/>
             <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -30,6 +31,7 @@
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
+            
             <ComboBox x:Name="cb_worker"
                       HorizontalAlignment="Left"
                 Width="200" Margin="30,5,0,0" 
@@ -37,6 +39,7 @@
                 <TextBlock Text="Консультант"/>
                 <TextBlock Text="Менеджер"/>     
             </ComboBox>
+            
                 <Button x:Name="btnMinimaze"
                         Style="{StaticResource topButon}"
                         Grid.Column="1"                                             

@@ -26,5 +26,16 @@ namespace Lesson11_new
             InitializeComponent();
             DataContext = new CreateClientWindowViewModel(this);
         }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
+        }
+
+        private void bt_cancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
