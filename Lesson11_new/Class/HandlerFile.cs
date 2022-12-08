@@ -7,7 +7,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Lesson11_new.Class
-{
+{/// <summary>
+/// Класс для работы с файлом
+/// </summary>
      class HandlerFile
     {
         static string path = @"C:\Users\Ivanovsv\Desktop\Lessons\Lesson11_new\client.txt";

@@ -34,10 +34,5 @@ namespace Lesson11_new.Class;
         this.TimeOfChange = dateTime;
         this.whatDataHasChangedInFile = whatDataHasChanged;
     }
-
-    public override string ToString()
-
-    {
-        return $"{LastnameClient} {NameClient} {PatronymicClient} {NumberPhoneClient} '********' {WhoCangedFile} {this.TimeOfChange} {WhatDataHasChangedInFile}";
-    }
+   
 }

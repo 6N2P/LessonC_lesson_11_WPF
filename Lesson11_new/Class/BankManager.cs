@@ -48,7 +48,7 @@ namespace Lesson11_new.Class
 
             DateTime dateTime = DateTime.Now;
             ClientBank clientBank = new ClientBank(lastNameClient, nameClient,
-                patronomikClient, phoneClient, seriesAndNamber, Name, dateTime, "создание клиента");
+                patronomikClient, phoneClient, seriesAndNamber,"Менеджер "+ Name, dateTime, "Создание клиента");
 
             List<ClientBank> clientBanks = new List<ClientBank>();
             handlerFile = new HandlerFile();
