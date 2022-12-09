@@ -28,7 +28,8 @@ namespace Lesson11_new
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new WindowViewModel();           
+            DataContext = new WindowViewModel();
+            
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -46,5 +47,7 @@ namespace Lesson11_new
         {
             Application.Current.Shutdown();
         }
+
+    
     }
 }

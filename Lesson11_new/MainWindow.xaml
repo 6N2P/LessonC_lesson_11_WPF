@@ -76,9 +76,8 @@
             </Grid>
         <DataGrid x:Name="dg_client" Grid.Row="1" Margin="10,5" 
                   AlternatingRowBackground="Gray"
-                  AutoGenerateColumns="False"
-                  
-                  ItemsSource="{Binding ClientBanksObs}"
+                  AutoGenerateColumns="False"                  
+                  ItemsSource="{Binding ClientBanksObs}"                  
                   >
             <DataGrid.Columns>
                 <DataGridTextColumn Width="auto" Header="Фамилия" Binding="{Binding LastnameClient}"/>

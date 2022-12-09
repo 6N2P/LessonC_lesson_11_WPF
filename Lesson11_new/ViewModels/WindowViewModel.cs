@@ -17,7 +17,9 @@ namespace Lesson11_new.ViewModels
         public WindowViewModel()
 
         {
-            SelectIndexWorcer = 0;  
+            SelectIndexWorcer = 0;
+            _initialClient = new ObservableCollection<ClientBank>();
+            _initialClient = CurrentListClient();
         }
 
         #endregion Constructor
@@ -32,10 +34,13 @@ namespace Lesson11_new.ViewModels
 
         #region Property 
         private ObservableCollection<ClientBank> _client;
+        private ObservableCollection<ClientBank> _initialClient;
         private HandlerFile _handlerFile; 
         private int _selectIndexWorcer;
         private string _nameBankWerker;
+        private int _columnChanged;
 
+        public int ColumnChanged { get => _columnChanged; set => _columnChanged = value; }
         public string NameBankWerker
         {
             get=> _nameBankWerker;
@@ -139,15 +144,32 @@ namespace Lesson11_new.ViewModels
                     (_saveChanged = new DelegateCommand(obj =>
                     {
                         List<ClientBank> clientBanks = new List<ClientBank>();
-                        clientBanks=ClientBanksObs.ToList();
+                        ObservableCollection<ClientBank> ChangeClientBanksObs = new ObservableCollection<ClientBank>();
+                        ChangeClientBanksObs = ChangeList(_initialClient, ClientBanksObs, NameBankWerker);
+                        clientBanks= ChangeClientBanksObs.ToList();
                         _handlerFile = new HandlerFile();
                         _handlerFile.SeaveClientListFile(clientBanks);
+
+                        
+                        _initialClient = CurrentListClient();
                     }));
             }
         }
         #endregion Comands
 
         #region Metods
+
+        private ObservableCollection<ClientBank> CurrentListClient()
+        {
+            ObservableCollection<ClientBank> result = new ObservableCollection<ClientBank>();
+            foreach (var client in ClientBanksObs)
+            {
+                ClientBank clientB = new ClientBank(client.LastnameClient, client.NameClient, client.PatronymicClient, client.NumberPhoneClient, client.SeriesAndNumberPassportClient
+                    , client.WhoCangedFile, client.TimeOfChange, client.WhatDataHasChangedInFile);
+                result.Add(clientB);
+            }
+            return result;
+        }
         /// <summary>
         /// Метод отображения данных для консультанта
         /// </summary>
@@ -177,6 +199,70 @@ namespace Lesson11_new.ViewModels
             _client = new ObservableCollection<ClientBank>(_handlerFile.LoadingDataFromFile());
 
             return _client;
+        }
+
+        private ObservableCollection<ClientBank> ChangeList(ObservableCollection<ClientBank> initialStait, ObservableCollection<ClientBank> afterChanged, String nameWorker)
+        {
+            ObservableCollection<ClientBank> result = new ObservableCollection<ClientBank>();
+            string changeString = string.Empty;
+            string nameWoker=string.Empty;
+            string changeLastName = "Фамилия, ";
+            string changeName = "Имя, ";
+            string changePatranomic = "Отчество, ";
+            string changeNumberPhon = "Телефон, ";
+            string changeSeriesAndNamber = "Серия и номер паспорта, ";
+            DateTime dateTime = DateTime.Now;
+            int cauntCange = 0;
+
+            for (int i = 0; i < initialStait.Count; i++)
+            {
+                changeString = initialStait[i].WhatDataHasChangedInFile;
+
+                if (initialStait[i].LastnameClient != afterChanged[i].LastnameClient)
+                {
+                    changeString += changeLastName;
+                    cauntCange++;
+                }
+                if (initialStait[i].NameClient != afterChanged[i].NameClient)
+                {
+                    changeString += changeName;
+                    cauntCange++;
+                }
+                if (initialStait[i].PatronymicClient != afterChanged[i].PatronymicClient)
+                {
+                    changeString += changePatranomic;
+                    cauntCange++;
+                }
+                if (initialStait[i].NumberPhoneClient != afterChanged[i].NumberPhoneClient)
+                {
+                    changeString += changeNumberPhon;
+                    cauntCange++;
+                }
+
+                if (initialStait[i].SeriesAndNumberPassportClient != afterChanged[i].SeriesAndNumberPassportClient)
+                {
+                    changeString += changeSeriesAndNamber;
+                    cauntCange++;
+                }
+
+                //проверка былили изменения чтобы установить Имя изменявшего
+                if(cauntCange>0)
+                {
+                    nameWoker = nameWorker;
+                }
+                else
+                {
+                    nameWoker = initialStait[i].WhoCangedFile;
+                }
+
+                result.Add(new ClientBank(afterChanged[i].LastnameClient, afterChanged[i].NameClient, afterChanged[i].PatronymicClient,
+                    afterChanged[i].NumberPhoneClient, afterChanged[i].SeriesAndNumberPassportClient, nameWoker, dateTime, changeString));
+
+                changeString = string.Empty;
+                nameWoker = string.Empty;
+                cauntCange = 0;
+            }
+            return result;
         }
         #endregion Metods
     }
