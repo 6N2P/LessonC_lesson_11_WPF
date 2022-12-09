@@ -129,6 +129,22 @@ namespace Lesson11_new.ViewModels
                     }));
             }
         }
+
+        DelegateCommand _saveChanged;
+        public DelegateCommand SaveChanged
+        {
+            get
+            {
+                return _saveChanged ??
+                    (_saveChanged = new DelegateCommand(obj =>
+                    {
+                        List<ClientBank> clientBanks = new List<ClientBank>();
+                        clientBanks=ClientBanksObs.ToList();
+                        _handlerFile = new HandlerFile();
+                        _handlerFile.SeaveClientListFile(clientBanks);
+                    }));
+            }
+        }
         #endregion Comands
 
         #region Metods
