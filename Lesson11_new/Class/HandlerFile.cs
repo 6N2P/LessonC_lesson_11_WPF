@@ -68,7 +68,7 @@ namespace Lesson11_new.Class
         /// переводит клиента в строку для записи в файл
         /// </summary>
         /// <param name="clientBank"></param>
-        /// <returns></returns>
+        /// <returns>Возвращает string</returns>
         static string ClientToString(ClientBank clientBank)
         {
             string clientString = $"{clientBank.LastnameClient}#{clientBank.NameClient}#" +

@@ -143,13 +143,15 @@ namespace Lesson11_new.ViewModels
                 return _saveChanged ??
                     (_saveChanged = new DelegateCommand(obj =>
                     {
-                        List<ClientBank> clientBanks = new List<ClientBank>();
-                        ObservableCollection<ClientBank> ChangeClientBanksObs = new ObservableCollection<ClientBank>();
-                        ChangeClientBanksObs = ChangeList(_initialClient, ClientBanksObs, NameBankWerker);
-                        clientBanks= ChangeClientBanksObs.ToList();
-                        _handlerFile = new HandlerFile();
-                        _handlerFile.SeaveClientListFile(clientBanks);
-
+                       
+                            List<ClientBank> clientBanks = new List<ClientBank>();
+                            ObservableCollection<ClientBank> ChangeClientBanksObs = new ObservableCollection<ClientBank>();
+                            ChangeClientBanksObs = ChangeList(_initialClient, ClientBanksObs, NameBankWerker, SelectIndexWorcer);
+                            clientBanks = ChangeClientBanksObs.ToList();
+                            _handlerFile = new HandlerFile();
+                            _handlerFile.SeaveClientListFile(clientBanks);
+                        
+                       
                         
                         _initialClient = CurrentListClient();
                     }));
@@ -200,8 +202,14 @@ namespace Lesson11_new.ViewModels
 
             return _client;
         }
-
-        private ObservableCollection<ClientBank> ChangeList(ObservableCollection<ClientBank> initialStait, ObservableCollection<ClientBank> afterChanged, String nameWorker)
+        /// <summary>
+        /// Изменяет коллекцию клиентов
+        /// </summary>
+        /// <param name="initialStait">Изначальная коллекция сотрудников</param>
+        /// <param name="afterChanged">Коллекция после изменения в окне</param>
+        /// <param name="nameWorker">Имя работника</param>
+        /// <returns>Возвращает изменёную коллекцию клиентов для записи в файл</returns>
+        private ObservableCollection<ClientBank> ChangeList(ObservableCollection<ClientBank> initialStait, ObservableCollection<ClientBank> afterChanged, String nameWorker, int workerChange)
         {
             ObservableCollection<ClientBank> result = new ObservableCollection<ClientBank>();
             string changeString = string.Empty;
@@ -213,40 +221,88 @@ namespace Lesson11_new.ViewModels
             string changeSeriesAndNamber = "Серия и номер паспорта, ";
             DateTime dateTime = DateTime.Now;
             int cauntCange = 0;
-
+          
             for (int i = 0; i < initialStait.Count; i++)
             {
                 changeString = initialStait[i].WhatDataHasChangedInFile;
+                
+                #region Изменение фамилии
+                if (workerChange == 1)
+                {
+                    if (initialStait[i].LastnameClient != afterChanged[i].LastnameClient)
+                    {
+                        changeString += changeLastName;
+                        cauntCange++;
+                    }
+                }
+                else
+                {
+                    changeString += initialStait[i].LastnameClient;
+                    MessageForConsultant();
+                    break;
+                }
+                #endregion Изменение фамилии
 
-                if (initialStait[i].LastnameClient != afterChanged[i].LastnameClient)
+                #region Изменение имени клиента
+                if (workerChange == 1)
                 {
-                    changeString += changeLastName;
-                    cauntCange++;
+                    if (initialStait[i].NameClient != afterChanged[i].NameClient)
+                    {
+                        changeString += changeName;
+                        cauntCange++;
+                    }
                 }
-                if (initialStait[i].NameClient != afterChanged[i].NameClient)
+                else
                 {
-                    changeString += changeName;
-                    cauntCange++;
+                    changeString += initialStait[i].NameClient;
+                    MessageForConsultant();
+                    break;
                 }
-                if (initialStait[i].PatronymicClient != afterChanged[i].PatronymicClient)
+                #endregion Изменение имени клиента
+
+                #region Изменение отчества
+                if (workerChange == 1)
                 {
-                    changeString += changePatranomic;
-                    cauntCange++;
+                    if (initialStait[i].PatronymicClient != afterChanged[i].PatronymicClient)
+                    {
+                        changeString += changePatranomic;
+                        cauntCange++;
+                    }
                 }
+                else
+                {
+                    changeString += initialStait[i].PatronymicClient;
+                    MessageForConsultant();
+                    break;
+                }
+                #endregion Изменение отчества
+
+                #region Изменение номера телефона
                 if (initialStait[i].NumberPhoneClient != afterChanged[i].NumberPhoneClient)
                 {
                     changeString += changeNumberPhon;
                     cauntCange++;
                 }
+                #endregion Изменение номера телефона 
 
-                if (initialStait[i].SeriesAndNumberPassportClient != afterChanged[i].SeriesAndNumberPassportClient)
+                #region Изменение серии и номера паспрота
+                if (workerChange == 1)
                 {
-                    changeString += changeSeriesAndNamber;
-                    cauntCange++;
+                    if (initialStait[i].SeriesAndNumberPassportClient != afterChanged[i].SeriesAndNumberPassportClient)
+                    {
+                        changeString += changeSeriesAndNamber;
+                        cauntCange++;
+                    }
                 }
+                else
+                {
+                    changeString += initialStait[i].SeriesAndNumberPassportClient;
+                    MessageForConsultant();
+                }
+                #endregion Изменение серии и номера паспрота
 
                 //проверка былили изменения чтобы установить Имя изменявшего
-                if(cauntCange>0)
+                if (cauntCange>0)
                 {
                     nameWoker = nameWorker;
                 }
@@ -263,7 +319,18 @@ namespace Lesson11_new.ViewModels
                 cauntCange = 0;
             }
             return result;
+
+            void MessageForConsultant()
+            {
+                MessageBox.Show("Консультант может менять только номер телефона");
+            }
+
         }
         #endregion Metods
+        enum worker : int
+        {
+            Consultant,
+            Manager
+        }
     }
 }
