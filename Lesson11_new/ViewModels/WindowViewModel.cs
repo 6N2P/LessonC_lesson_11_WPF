@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Markup;
 using Lesson11_new.Class;
 
 namespace Lesson11_new.ViewModels
@@ -20,6 +21,7 @@ namespace Lesson11_new.ViewModels
             SelectIndexWorcer = 0;
             _initialClient = new ObservableCollection<ClientBank>();
             _initialClient = CurrentListClient();
+            NameBankWerker = "Консультант";
         }
 
         #endregion Constructor
@@ -46,6 +48,10 @@ namespace Lesson11_new.ViewModels
             get=> _nameBankWerker;
             set
             {
+                if (string.IsNullOrEmpty(value))
+                {
+                    MessageBox.Show("Поле имени сотрудника не должлно быть пустым");
+                }
                 _nameBankWerker = value;
                 OnPropertyChanged("NameBankWerker");
             }
@@ -70,7 +76,9 @@ namespace Lesson11_new.ViewModels
                 }
             }
         }
-
+        /// <summary>
+        /// Список клиентов банка из DataGeid
+        /// </summary>
         public ObservableCollection<ClientBank> ClientBanksObs
         {
             get
@@ -122,20 +130,26 @@ namespace Lesson11_new.ViewModels
                 return _updateDataGrid ??
                     (_updateDataGrid = new DelegateCommand(obj =>
                     {
-                        ClientBanksObs = new ObservableCollection<ClientBank>();
-                        if (SelectIndexWorcer == 0)
-                        {
-                            ClientBanksObs = GetClientForConsultant();
-                        }
-                        else
-                        {
-                            ClientBanksObs = GetClientForManedger();
-                        };
+                      
+                            ClientBanksObs = new ObservableCollection<ClientBank>();
+                            if (SelectIndexWorcer == 0)
+                            {
+                                ClientBanksObs = GetClientForConsultant();
+                            }
+                            else
+                            {
+                                ClientBanksObs = GetClientForManedger();
+                            };
+                        
+                       
                     }));
             }
         }
 
         DelegateCommand _saveChanged;
+        /// <summary>
+        /// Команда для сохронения изменений 
+        /// </summary>
         public DelegateCommand SaveChanged
         {
             get
@@ -146,21 +160,25 @@ namespace Lesson11_new.ViewModels
                        
                             List<ClientBank> clientBanks = new List<ClientBank>();
                             ObservableCollection<ClientBank> ChangeClientBanksObs = new ObservableCollection<ClientBank>();
-                            ChangeClientBanksObs = ChangeList(_initialClient, ClientBanksObs, NameBankWerker, SelectIndexWorcer);
+                            _initialClient = GetClientForManedger();
+                            ChangeClientBanksObs = ChangeList(_initialClient, ClientBanksObs, _nameBankWerker, _selectIndexWorcer);
                             clientBanks = ChangeClientBanksObs.ToList();
                             _handlerFile = new HandlerFile();
                             _handlerFile.SeaveClientListFile(clientBanks);
+
+                            _initialClient = CurrentListClient();
                         
-                       
-                        
-                        _initialClient = CurrentListClient();
+                      
                     }));
             }
         }
         #endregion Comands
 
         #region Metods
-
+        /// <summary>
+        /// Метод возвращает список текущих клиентов
+        /// </summary>
+        /// <returns>Возвращает список для DataGrid</returns>
         private ObservableCollection<ClientBank> CurrentListClient()
         {
             ObservableCollection<ClientBank> result = new ObservableCollection<ClientBank>();
@@ -173,9 +191,9 @@ namespace Lesson11_new.ViewModels
             return result;
         }
         /// <summary>
-        /// Метод отображения данных для консультанта
+        /// Метод для получелния данных из файла со скрытием мерии и номера паспорта
         /// </summary>
-        /// <returns>Возвращает список клиентов</returns>
+        /// <returns>Возвращает список клиентов, не отображает серию и номер паспорта</returns>
         private ObservableCollection<ClientBank> GetClientForConsultant()
         {
             _handlerFile = new HandlerFile();
@@ -192,7 +210,7 @@ namespace Lesson11_new.ViewModels
             return _client;
         }
         /// <summary>
-        /// Метод отображения данных для менеджара
+        /// Метод для получения данных из Файла для Менеджера
         /// </summary>
         /// <returns>Возвращает список клиентов</returns>
         private ObservableCollection<ClientBank> GetClientForManedger()
@@ -208,114 +226,195 @@ namespace Lesson11_new.ViewModels
         /// <param name="initialStait">Изначальная коллекция сотрудников</param>
         /// <param name="afterChanged">Коллекция после изменения в окне</param>
         /// <param name="nameWorker">Имя работника</param>
+        /// <param name="workerChange">Значение выбранное в окне</param>
         /// <returns>Возвращает изменёную коллекцию клиентов для записи в файл</returns>
-        private ObservableCollection<ClientBank> ChangeList(ObservableCollection<ClientBank> initialStait, ObservableCollection<ClientBank> afterChanged, String nameWorker, int workerChange)
+        private ObservableCollection<ClientBank> ChangeList(ObservableCollection<ClientBank> initialStait, 
+            ObservableCollection<ClientBank> afterChanged, String nameWorker, int workerChange)
         {
+          
+
             ObservableCollection<ClientBank> result = new ObservableCollection<ClientBank>();
             string changeString = string.Empty;
-            string nameWoker=string.Empty;
+            string _nameWoker=nameWorker;
+            int initWorkerChange=workerChange;
             string changeLastName = "Фамилия, ";
+            string afterChangeLastName = string.Empty;
             string changeName = "Имя, ";
+            string afterChangeName=string.Empty;
             string changePatranomic = "Отчество, ";
+            string afterChangePatranomic = string.Empty;
             string changeNumberPhon = "Телефон, ";
+            decimal afterChangeNamberPhon = 0;
             string changeSeriesAndNamber = "Серия и номер паспорта, ";
+            string afterChfngeSeriesAndNamber = string.Empty;
             DateTime dateTime = DateTime.Now;
             int cauntCange = 0;
+
+         
           
             for (int i = 0; i < initialStait.Count; i++)
             {
                 changeString = initialStait[i].WhatDataHasChangedInFile;
-                
+
                 #region Изменение фамилии
-                if (workerChange == 1)
+
+                if (initialStait[i].LastnameClient != afterChanged[i].LastnameClient)
                 {
-                    if (initialStait[i].LastnameClient != afterChanged[i].LastnameClient)
+                    if (initWorkerChange == 1)
                     {
+                        afterChangeLastName = afterChanged[i].LastnameClient;
                         changeString += changeLastName;
                         cauntCange++;
+                        //проверка былили изменения чтобы установить Имя изменявшего
+                        if (cauntCange > 0)
+                        {
+                            _nameWoker = nameWorker;
+                        }
+                        else
+                        {
+                            _nameWoker = initialStait[i].WhoCangedFile;
+                        }
+                    }
+                    else
+                    {
+                        afterChangeLastName = initialStait[i].LastnameClient;
+                        MessageForConsultant();
                     }
                 }
                 else
                 {
-                    changeString += initialStait[i].LastnameClient;
-                    MessageForConsultant();
-                    break;
+                    afterChangeLastName = initialStait[i].LastnameClient;                    
                 }
+
                 #endregion Изменение фамилии
 
                 #region Изменение имени клиента
-                if (workerChange == 1)
+
+                if (initialStait[i].NameClient != afterChanged[i].NameClient)
                 {
-                    if (initialStait[i].NameClient != afterChanged[i].NameClient)
+                    if (initWorkerChange == 1)
                     {
+                        afterChangeName = afterChanged[i].NameClient;
                         changeString += changeName;
                         cauntCange++;
+                        //проверка былили изменения чтобы установить Имя изменявшего
+                        if (cauntCange > 0)
+                        {
+                            _nameWoker = nameWorker;
+                        }
+                        else
+                        {
+                            _nameWoker = initialStait[i].WhoCangedFile;
+                        }
+                    }
+                    else
+                    {
+                        afterChangeName = initialStait[i].NameClient;
+                        MessageForConsultant();
                     }
                 }
                 else
                 {
-                    changeString += initialStait[i].NameClient;
-                    MessageForConsultant();
-                    break;
+                    afterChangeName = initialStait[i].NameClient;                    
                 }
+
                 #endregion Изменение имени клиента
 
                 #region Изменение отчества
-                if (workerChange == 1)
+
+                if (initialStait[i].PatronymicClient != afterChanged[i].PatronymicClient)
                 {
-                    if (initialStait[i].PatronymicClient != afterChanged[i].PatronymicClient)
+                    if (initWorkerChange == 1)
                     {
+                        afterChangePatranomic = afterChanged[i].PatronymicClient;
                         changeString += changePatranomic;
                         cauntCange++;
+                        //проверка былили изменения чтобы установить Имя изменявшего
+                        if (cauntCange > 0)
+                        {
+                            _nameWoker = nameWorker;
+                        }
+                        else
+                        {
+                            _nameWoker = initialStait[i].WhoCangedFile;
+                        }
+                    }
+                    else
+                    {
+                        afterChangePatranomic = initialStait[i].PatronymicClient;
+                        MessageForConsultant();
                     }
                 }
                 else
                 {
-                    changeString += initialStait[i].PatronymicClient;
-                    MessageForConsultant();
-                    break;
+                    afterChangePatranomic = initialStait[i].PatronymicClient;                    
                 }
+
+
                 #endregion Изменение отчества
 
                 #region Изменение номера телефона
                 if (initialStait[i].NumberPhoneClient != afterChanged[i].NumberPhoneClient)
                 {
+                    afterChangeNamberPhon = afterChanged[i].NumberPhoneClient;
                     changeString += changeNumberPhon;
                     cauntCange++;
-                }
-                #endregion Изменение номера телефона 
-
-                #region Изменение серии и номера паспрота
-                if (workerChange == 1)
-                {
-                    if (initialStait[i].SeriesAndNumberPassportClient != afterChanged[i].SeriesAndNumberPassportClient)
+                    //проверка былили изменения чтобы установить Имя изменявшего
+                    if (cauntCange > 0)
                     {
-                        changeString += changeSeriesAndNamber;
-                        cauntCange++;
+                        _nameWoker = nameWorker;
+                    }
+                    else
+                    {
+                        _nameWoker = initialStait[i].WhoCangedFile;
                     }
                 }
                 else
                 {
-                    changeString += initialStait[i].SeriesAndNumberPassportClient;
-                    MessageForConsultant();
+                    afterChangeNamberPhon = initialStait[i].NumberPhoneClient;
                 }
-                #endregion Изменение серии и номера паспрота
+                #endregion Изменение номера телефона 
 
-                //проверка былили изменения чтобы установить Имя изменявшего
-                if (cauntCange>0)
+                #region Изменение серии и номера паспрота
+
+                if (initialStait[i].SeriesAndNumberPassportClient != afterChanged[i].SeriesAndNumberPassportClient)
                 {
-                    nameWoker = nameWorker;
+                    if (initWorkerChange == 1)
+                    {
+                        afterChfngeSeriesAndNamber = afterChanged[i].SeriesAndNumberPassportClient;
+                        changeString += changeSeriesAndNamber;
+                        cauntCange++;
+                        //проверка былили изменения чтобы установить Имя изменявшего
+                        if (cauntCange > 0)
+                        {
+                            _nameWoker = nameWorker;
+                        }
+                        else
+                        {
+                            _nameWoker = initialStait[i].WhoCangedFile;
+                        }
+                    }
+                    else
+                    {
+                        afterChfngeSeriesAndNamber = initialStait[i].SeriesAndNumberPassportClient;
+                        MessageForConsultant();
+                    }
                 }
                 else
                 {
-                    nameWoker = initialStait[i].WhoCangedFile;
+                    afterChfngeSeriesAndNamber = initialStait[i].SeriesAndNumberPassportClient;                   
                 }
 
-                result.Add(new ClientBank(afterChanged[i].LastnameClient, afterChanged[i].NameClient, afterChanged[i].PatronymicClient,
-                    afterChanged[i].NumberPhoneClient, afterChanged[i].SeriesAndNumberPassportClient, nameWoker, dateTime, changeString));
+
+                #endregion Изменение серии и номера паспрота
+
+
+
+                result.Add(new ClientBank(afterChangeLastName, afterChangeName, afterChangePatranomic,
+                    afterChangeNamberPhon, afterChfngeSeriesAndNamber, _nameWoker, dateTime, changeString));
 
                 changeString = string.Empty;
-                nameWoker = string.Empty;
+                _nameWoker = string.Empty;
                 cauntCange = 0;
             }
             return result;
@@ -327,10 +426,10 @@ namespace Lesson11_new.ViewModels
 
         }
         #endregion Metods
-        enum worker : int
+        enum worker 
         {
-            Consultant,
-            Manager
+            Consultant = 0,
+            Manager = 1
         }
     }
 }
