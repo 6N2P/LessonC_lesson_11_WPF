@@ -17,11 +17,11 @@ namespace Lesson11_new.ViewModels
         #region Constructor
         public WindowViewModel()
 
-        {
-            SelectIndexWorcer = 0;
+        {            
             _initialClient = new ObservableCollection<ClientBank>();
             _initialClient = CurrentListClient();
             NameBankWerker = "Консультант";
+            SelectIndexWorcer = 0;
         }
 
         #endregion Constructor
@@ -57,7 +57,6 @@ namespace Lesson11_new.ViewModels
                 OnPropertyChanged("NameBankWerker");
             }
         }
-
         public int SelectIndexWorcer
         {
             get => _selectIndexWorcer;
@@ -78,7 +77,6 @@ namespace Lesson11_new.ViewModels
             }
         }
 
-        
         /// <summary>
         /// Список клиентов банка из DataGeid
         /// </summary>
@@ -94,7 +92,6 @@ namespace Lesson11_new.ViewModels
                 OnPropertyChanged("ClientBanksObs");
             }
         }
-
         #endregion Property
 
         #region Comands
@@ -133,18 +130,16 @@ namespace Lesson11_new.ViewModels
                 return _updateDataGrid ??
                     (_updateDataGrid = new DelegateCommand(obj =>
                     {
-                      
-                            ClientBanksObs = new ObservableCollection<ClientBank>();
-                            if (SelectIndexWorcer == 0)
-                            {
-                                ClientBanksObs = GetClientForConsultant();
-                            }
-                            else
-                            {
-                                ClientBanksObs = GetClientForManedger();
-                            };
-                        
-                       
+
+                        ClientBanksObs = new ObservableCollection<ClientBank>();
+                        if (SelectIndexWorcer == 0)
+                        {
+                            ClientBanksObs = GetClientForConsultant();
+                        }
+                        else
+                        {
+                            ClientBanksObs = GetClientForManedger();
+                        };
                     }));
             }
         }
@@ -160,19 +155,16 @@ namespace Lesson11_new.ViewModels
                 return _saveChanged ??
                     (_saveChanged = new DelegateCommand(obj =>
                     {
-                       
-                            List<ClientBank> clientBanks = new List<ClientBank>();
-                            ObservableCollection<ClientBank> ChangeClientBanksObs = new ObservableCollection<ClientBank>();
-                            ObservableCollection<ClientBank> ClientFail = GetActualClientFail();
-                        
-                            ChangeClientBanksObs = ChangeList(ClientFail, NameBankWerker, SelectIndexWorcer);
-                            clientBanks = ChangeClientBanksObs.ToList();
-                            _handlerFile = new HandlerFile();
-                            _handlerFile.SeaveClientListFile(clientBanks);
+                        List<ClientBank> clientBanks = new List<ClientBank>();
+                        ObservableCollection<ClientBank> ChangeClientBanksObs = new ObservableCollection<ClientBank>();
+                        ObservableCollection<ClientBank> ClientFail = GetActualClientFail();
 
-                            _initialClient = CurrentListClient();
-                        
-                      
+                        ChangeClientBanksObs = ChangeList(ClientFail, NameBankWerker, SelectIndexWorcer);
+                        clientBanks = ChangeClientBanksObs.ToList();
+                        _handlerFile = new HandlerFile();
+                        _handlerFile.SeaveClientListFile(clientBanks);
+
+                        _initialClient = CurrentListClient();
                     }));
             }
         }
@@ -182,7 +174,7 @@ namespace Lesson11_new.ViewModels
         /// <summary>
         /// Метод возвращает список текущих клиентов
         /// </summary>
-        /// <returns>Возвращает список для DataGrid</returns>
+        /// <returns>Возвращает список из DataGrid</returns>
         private ObservableCollection<ClientBank> CurrentListClient()
         {
             ObservableCollection<ClientBank> result = new ObservableCollection<ClientBank>();
@@ -195,9 +187,9 @@ namespace Lesson11_new.ViewModels
             return result;
         }
         /// <summary>
-        /// Метод для получелния данных из файла со скрытием мерии и номера паспорта
+        /// Метод для получелния данных из файла со скрытием серии и номера паспорта
         /// </summary>
-        /// <returns>Возвращает список клиентов, не отображает серию и номер паспорта</returns>
+        /// <returns>Возвращает список клиентов для DataGrid, не отображает серию и номер паспорта</returns>
         private ObservableCollection<ClientBank> GetClientForConsultant()
         {
             _handlerFile = new HandlerFile();
@@ -224,6 +216,10 @@ namespace Lesson11_new.ViewModels
 
             return _client;
         }
+        /// <summary>
+        /// Получает актуальный список клиентов из файла
+        /// </summary>
+        /// <returns>Возвращает список клиентов</returns>
         private ObservableCollection<ClientBank> GetActualClientFail()
         {
             _handlerFile = new HandlerFile();
@@ -240,32 +236,28 @@ namespace Lesson11_new.ViewModels
         /// <returns>Возвращает изменёную коллекцию клиентов для записи в файл</returns>
         private ObservableCollection<ClientBank> ChangeList(ObservableCollection<ClientBank> initialStait
             , String nameWorker, int workerChange)
-        {
-          
-
+        {          
             ObservableCollection<ClientBank> result = new ObservableCollection<ClientBank>();
             string changeString = string.Empty;
             string _nameWoker=string.Empty;
             int initWorkerChange = workerChange;
-            string changeLastName = "Фамилия, ";
+            string changeLastName = ", Фамилия";
             string afterChangeLastName = string.Empty;
-            string changeName = "Имя, ";
+            string changeName = ", Имя";
             string afterChangeName=string.Empty;
-            string changePatranomic = "Отчество, ";
+            string changePatranomic = ", Отчество";
             string afterChangePatranomic = string.Empty;
-            string changeNumberPhon = "Телефон, ";
+            string changeNumberPhon = ", Телефон";
             decimal afterChangeNamberPhon = 0;
-            string changeSeriesAndNamber = "Серия и номер паспорта, ";
+            string changeSeriesAndNamber = ", Серия и номер паспорта";
             string afterChfngeSeriesAndNamber = string.Empty;
             DateTime dateTime = DateTime.Now;
             int cauntCange = 0;
 
-            bool flagMessage=false;
-
             for (int i = 0; i < initialStait.Count; i++)
             {
+                ///Считывает столбец что ужн бало измененно
                 changeString = initialStait[i].WhatDataHasChangedInFile;
-
                 #region Изменение фамилии
 
                 if (initialStait[i].LastnameClient != ClientBanksObs[i].LastnameClient)
@@ -274,17 +266,16 @@ namespace Lesson11_new.ViewModels
                     {
                         afterChangeLastName = ClientBanksObs[i].LastnameClient;
                         changeString += changeLastName;
-                        cauntCange++;                                            
+                        cauntCange++;
                     }
                     else
                     {
                         afterChangeLastName = initialStait[i].LastnameClient;
-                        flagMessage = true;                                             
                     }
                 }
                 else
                 {
-                    afterChangeLastName = initialStait[i].LastnameClient;                    
+                    afterChangeLastName = initialStait[i].LastnameClient;
                 }
                 //проверка былили изменения чтобы установить Имя изменявшего
                 if (cauntCange > 0)
@@ -306,17 +297,16 @@ namespace Lesson11_new.ViewModels
                     {
                         afterChangeName = ClientBanksObs[i].NameClient;
                         changeString += changeName;
-                        cauntCange++;                                          
+                        cauntCange++;
                     }
                     else
                     {
                         afterChangeName = initialStait[i].NameClient;
-                        flagMessage = true;                                             
                     }
                 }
                 else
                 {
-                    afterChangeName = initialStait[i].NameClient;                  
+                    afterChangeName = initialStait[i].NameClient;
                 }
                 //проверка былили изменения чтобы установить Имя изменявшего
                 if (cauntCange > 0)
@@ -338,17 +328,16 @@ namespace Lesson11_new.ViewModels
                     {
                         afterChangePatranomic = ClientBanksObs[i].PatronymicClient;
                         changeString += changePatranomic;
-                        cauntCange++;                                          
+                        cauntCange++;
                     }
                     else
                     {
                         afterChangePatranomic = initialStait[i].PatronymicClient;
-                        flagMessage = true;                                               
                     }
                 }
                 else
                 {
-                    afterChangePatranomic = initialStait[i].PatronymicClient;                    
+                    afterChangePatranomic = initialStait[i].PatronymicClient;
                 }
                 //проверка былили изменения чтобы установить Имя изменявшего
                 if (cauntCange > 0)
@@ -392,17 +381,16 @@ namespace Lesson11_new.ViewModels
                     {
                         afterChfngeSeriesAndNamber = ClientBanksObs[i].SeriesAndNumberPassportClient;
                         changeString += changeSeriesAndNamber;
-                        cauntCange++;                                           
+                        cauntCange++;
                     }
                     else
                     {
                         afterChfngeSeriesAndNamber = initialStait[i].SeriesAndNumberPassportClient;
-                        flagMessage = true;                                             
                     }
                 }
                 else
                 {
-                    afterChfngeSeriesAndNamber = initialStait[i].SeriesAndNumberPassportClient;                 
+                    afterChfngeSeriesAndNamber = initialStait[i].SeriesAndNumberPassportClient;
                 }
                 //проверка былили изменения чтобы установить Имя изменявшего
                 if (cauntCange > 0)
@@ -414,7 +402,6 @@ namespace Lesson11_new.ViewModels
                     _nameWoker = initialStait[i].WhoCangedFile;
                 }
                 #endregion Изменение серии и номера паспрота
-                if (flagMessage) MessageForConsultant();
 
                 result.Add(new ClientBank(afterChangeLastName, afterChangeName, afterChangePatranomic,
                     afterChangeNamberPhon, afterChfngeSeriesAndNamber, _nameWoker, dateTime, changeString));
@@ -422,20 +409,10 @@ namespace Lesson11_new.ViewModels
                 changeString = string.Empty;
                 _nameWoker = string.Empty;
                 cauntCange = 0;
-                flagMessage= false;
             }
-            return result;        
+            return result;
+        }
 
-        }
-        void MessageForConsultant()
-        {
-            MessageBox.Show("Консультант может менять только номер телефона");
-        }
-        #endregion Metods
-        enum worker 
-        {
-            Consultant = 0,
-            Manager = 1
-        }
+        #endregion Metods       
     }
 }
