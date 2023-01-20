@@ -19,7 +19,8 @@ namespace Lesson11_new.ViewModels
 
         {            
             _initialClient = new ObservableCollection<ClientBank>();
-            _initialClient = CurrentListClient();
+           // _initialClient = CurrentListClient();
+            _initialClient = GetActualClientFail();
             NameBankWerker = "Консультант";
             SelectIndexWorcer = 0;
         }
